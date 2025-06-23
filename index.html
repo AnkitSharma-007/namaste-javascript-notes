@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Namaste JS: An Interactive Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f0f7ff;
+        color: #00224d;
+        /* Subtle background pattern */
+        background-image: radial-gradient(#e0eaff 1px, transparent 1px),
+          radial-gradient(#e0eaff 1px, #f0f7ff 1px);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+      }
+      .card {
+        background-color: #ffffff;
+        border-radius: 1.5rem; /* More rounded */
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1); /* Deeper shadow */
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+        border: 1px solid #e0eaff;
+        padding: 2.5rem; /* More padding */
+      }
+      .card:hover {
+        box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15),
+          0 10px 15px -3px rgb(0 0 0 / 0.1); /* Even deeper on hover */
+        transform: translateY(-2px) scale(1.002); /* Slight lift and scale */
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.85rem 1.75rem; /* Slightly larger */
+        border-radius: 0.75rem; /* More rounded buttons */
+        font-weight: 700; /* Bolder text */
+        color: #ffffff;
+        background-color: #0077ff;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+      .btn:hover:not(:disabled) {
+        background-color: #0056b3;
+        transform: translateY(-3px) scale(1.02); /* More pronounced hover */
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      .btn-secondary {
+        background-color: #a4d4ff;
+        color: #0048a4;
+        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.08); /* Lighter shadow for secondary */
+      }
+      .btn-secondary:hover:not(:disabled) {
+        background-color: #8bbce6;
+        color: #00388a;
+      }
+      .btn:disabled {
+        background-color: #e5e7eb; /* Lighter disabled background */
+        color: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      .code-block {
+        background-color: #001f3f;
+        color: #a4d4ff;
+        padding: 1.5rem; /* More padding */
+        border-radius: 1rem; /* More rounded */
+        font-family: "Fira Code", "Courier New", Courier, monospace;
+        font-size: 0.95rem; /* Slightly larger font */
+        white-space: pre-wrap;
+        line-height: 1.7; /* Increased line height */
+        border: 1px solid #003366;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Inner shadow */
+      }
+      .highlight-line {
+        background-color: rgba(
+          0,
+          119,
+          255,
+          0.35
+        ) !important; /* Stronger highlight */
+      }
+      .simulator-output-box {
+        background-color: #fcfdfe; /* Lighter background */
+        color: #00224d;
+        min-height: 120px;
+        overflow-y: auto;
+        padding: 1.25rem; /* More padding */
+        border-radius: 1rem; /* More rounded */
+        font-family: "Fira Code", "Courier New", Courier, monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        border: 1px solid #dbeafe; /* Lighter border */
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+      }
+      .error-message {
+        color: #ef4444;
+        font-weight: 600;
+      } /* Bolder error */
+      .undefined-value {
+        color: #f59e0b;
+        font-weight: 600;
+      } /* Bolder undefined */
+      .data-table table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .data-table th,
+      .data-table td {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 14px;
+        text-align: left;
+      } /* More padding in table */
+      .data-table th {
+        background-color: #f8fafc;
+        font-weight: 700;
+        color: #00224d;
+      } /* Bolder, darker table header */
+      .nav-link {
+        transition: all 0.25s ease;
+        color: #0048a4;
+        padding: 10px 16px; /* Larger nav links */
+        border-radius: 9999px;
+        font-weight: 600;
+      }
+      .nav-link:hover {
+        color: #0077ff;
+        background-color: #e0f0ff;
+        transform: translateY(-2px);
+      }
+      .nav-link.active {
+        font-weight: bold;
+        color: #ffffff;
+        background-color: #0077ff;
+        box-shadow: 0 4px 8px rgba(0, 119, 255, 0.3);
+      }
+      .stack-item {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+      .stack-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .stack-item.active {
+        border: 3px solid #00e0ff; /* Brighter active border */
+        box-shadow: 0 0 16px rgba(0, 224, 255, 0.7); /* Stronger active shadow */
+        transform: scale(1.03); /* Slightly more scale */
+        position: relative; /* Ensure z-index works */
+        z-index: 10; /* Bring active item to front */
+      }
+
+      /* Fade in on scroll animation */
+      .fade-in-section {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+      }
+      .fade-in-section.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Specific styles for event loop queues for FIFO behavior */
+      #el-micro,
+      #el-macro {
+        display: flex;
+        flex-direction: column; /* Changed to column for FIFO visual */
+        justify-content: flex-start; /* Items start from top */
+      }
+      .event-loop-item {
+        transition: all 0.4s ease-out; /* Smooth transition for items moving in/out */
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      .event-loop-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .event-loop-item.processing {
+        background-color: #ffedc7; /* Highlight for items being processed */
+        border: 2px solid #f59e0b;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md py-3">
+      <div
+        class="container mx-auto px-4 flex justify-center space-x-2 md:space-x-4"
+      >
+        <a href="#execution-context" class="nav-link text-sm md:text-base"
+          >EC</a
+        >
+        <a href="#two-phase-process" class="nav-link text-sm md:text-base"
+          >Hoisting</a
+        >
+        <a href="#call-stack" class="nav-link text-sm md:text-base"
+          >Call Stack</a
+        >
+        <a href="#block-scope-tdz" class="nav-link text-sm md:text-base"
+          >Block Scope</a
+        >
+        <a href="#closures" class="nav-link text-sm md:text-base">Closures</a>
+        <a href="#event-loop" class="nav-link text-sm md:text-base"
+          >Event Loop</a
+        >
+        <a href="#higher-order-functions" class="nav-link text-sm md:text-base"
+          >HOFs</a
+        >
+      </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 md:py-12">
+      <header class="text-center mb-16 md:mb-24">
+        <h1
+          class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0077FF] to-[#00A4FF] mb-4 leading-tight"
+        >
+          How JavaScript Really Works
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+          An interactive guide to the core JavaScript concepts. Let's look under
+          the hood of the JS engine and unravel its mysteries.
+        </p>
+      </header>
+
+      <section
+        id="execution-context"
+        class="mb-16 md:mb-24 pt-8 fade-in-section"
+      >
+        <div class="card p-6 md:p-10">
+          <h2 class="text-3xl font-bold mb-4 text-center text-blue-800">
+            Episode 1: The Execution Context
+          </h2>
+          <p class="text-gray-600 mb-8 text-center max-w-2xl mx-auto text-lg">
+            Everything in JavaScript happens inside an **Execution Context
+            (EC)**. Think of it as the environment where your code is evaluated.
+            Every EC has two essential components.
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 text-center">
+            <div
+              class="p-6 bg-blue-50 rounded-xl border border-blue-200 shadow-sm flex flex-col items-center justify-center"
+            >
+              <div class="text-5xl mb-3">🧠</div>
+              <h3 class="text-2xl font-semibold mb-2 text-blue-800">
+                Memory Component
+              </h3>
+              <p class="text-blue-700">
+                Also known as the Variable Environment. The storage area where
+                JS holds all your variables and functions as key-value pairs.
+                Populated before your code runs.
+              </p>
+            </div>
+            <div
+              class="p-6 bg-blue-50 rounded-xl border border-blue-200 shadow-sm flex flex-col items-center justify-center"
+            >
+              <div class="text-5xl mb-3">⚙️</div>
+              <h3 class="text-2xl font-semibold mb-2 text-blue-800">
+                Code Component
+              </h3>
+              <p class="text-blue-700">
+                Also known as the Thread of Execution. The single "worker" that
+                executes your code line-by-line. This makes JS synchronous and
+                single-threaded by nature.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="two-phase-process"
+        class="mb-16 md:mb-24 pt-8 fade-in-section"
+      >
+        <div class="card p-6 md:p-10">
+          <h2 class="text-3xl font-bold mb-4 text-center text-blue-800">
+            Episode 2 & 3: The Two-Phase Process & Hoisting
+          </h2>
+          <p class="text-gray-600 mb-8 text-center max-w-2xl mx-auto text-lg">
+            An EC is created in two phases: Memory Creation and Code Execution.
+            This simulator demonstrates this process, which is the reason for a
+            core JS behavior known as **Hoisting**. Click "Next Step" to
+            visualize it.
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+              <h3 class="font-semibold text-xl mb-3 text-blue-700">
+                Your Code:
+              </h3>
+              <div class="code-block" id="two-phase-code"></div>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <button id="nextPhaseStepBtn" class="btn">Next Step</button>
+                <button id="resetPhaseBtn" class="btn btn-secondary">
+                  Reset
+                </button>
+              </div>
+              <p
+                id="tps-description"
+                class="mt-4 text-base text-gray-700 font-medium min-h-[40px]"
+              ></p>
+            </div>
+            <div>
+              <h3 class="font-semibold text-xl mb-3 text-center text-blue-700">
+                Behind the Scenes:
+              </h3>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 class="font-semibold text-center mb-2 text-blue-600">
+                    🧠 Memory (Variable Environment)
+                  </h4>
+                  <div
+                    id="memory-content"
+                    class="p-4 bg-gray-100 rounded-lg h-56 overflow-y-auto text-sm border border-gray-200 shadow-inner"
+                  ></div>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-center mb-2 text-blue-600">
+                    🖥️ Output (Console)
+                  </h4>
+                  <div
+                    id="output-content"
+                    class="simulator-output-box h-56"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="call-stack" class="mb-16 md:mb-24 pt-8 fade-in-section">
+        <div class="card p-6 md:p-10">
+          <h2 class="text-3xl font-bold mb-4 text-center text-blue-800">
+            Episode 4, 5 & 7: The Call Stack, Global Object & Scope Chain
+          </h2>
+          <p class="text-gray-600 mb-8 text-center max-w-2xl mx-auto text-lg">
+            This animation visualizes how JavaScript manages function
+            invocations using the **Call Stack**. When a function is called, its
+            EC is pushed onto the stack. The base is the **Global EC**,
+            associated with the **Global Object**. The engine uses the **Scope
+            Chain** to find variables. Click "Play Animation" to see the flow.
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h3 class="font-semibold text-xl mb-3 text-blue-700">
+                Sample Code:
+              </h3>
+              <div class="code-block" id="call-stack-code"></div>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <button id="playStackBtn" class="btn">Play Animation</button>
+                <button id="resetStackBtn" class="btn btn-secondary">
+                  Reset
+                </button>
+              </div>
+              <p
+                id="call-stack-description"
+                class="mt-4 text-base text-gray-700 font-medium min-h-[40px]"
+              ></p>
+            </div>
+            <div>
+              <h3 class="font-semibold text-xl mb-3 text-center text-blue-700">
+                Execution Call Stack
+              </h3>
+              <div
+                id="call-stack-visual"
+                class="relative bg-gray-100 rounded-lg h-80 p-2 flex flex-col-reverse items-center justify-start border-2 border-blue-200 overflow-hidden shadow-inner"
+              ></div>
+              <h3
+                class="font-semibold text-xl mb-3 mt-6 text-center text-blue-700"
+              >
+                Console Output
+              </h3>
+              <div
+                id="call-stack-output"
+                class="simulator-output-box h-24 mt-2"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="block-scope-tdz" class="mb-16 md:mb-24 pt-8 fade-in-section">
+        <div class="card p-6 md:p-10">
+          <h2 class="text-3xl font-bold mb-4 text-center text-blue-800">
+            Episode 6, 8 & 9: Block Scope, TDZ & Variable Differences
+          </h2>
+          <p class="text-gray-600 mb-8 text-center max-w-2xl mx-auto text-lg">
+            Explore the crucial differences between `var`, `let`, and `const`.
+            This simulator demonstrates **Hoisting**, **Block Scope**, the
+            **Temporal Dead Zone (TDZ)**, and various JavaScript **Error
+            Types**. Choose a scenario and click "Run" to see how the engine
+            behaves and understand variable accessibility.
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+              <h3 class="font-semibold text-xl mb-3 text-blue-700">
+                Select a Scenario:
+              </h3>
+              <select
+                id="tdzScenarioSelector"
+                class="w-full p-3 border border-gray-300 rounded-lg mb-4 bg-gray-50 focus:ring-2 focus:ring-blue-300 focus:border-blue-400 outline-none transition duration-200"
+              ></select>
+              <div
+                class="code-block"
+                id="tdz-code-block"
+                style="min-height: 200px"
+              ></div>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <button id="runTDZBtn" class="btn">Run Simulation</button>
+                <button id="resetTDZBtn" class="btn btn-secondary">
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-semibold text-xl mb-3 text-blue-700">
+                Result & Explanation:
+              </h3>
+              <div class="simulator-output-box" id="tdz-output"></div>
+              <p
+                id="tdz-description"
+                class="mt-4 text-base text-gray-700 font-medium min-h-[60px]"
+              ></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="closures" class="mb-16 md:mb-24 pt-8 fade-in-section">
+        <div class="card p-6 md:p-10">
+          <h2 class="text-3xl font-bold mb-4 text-center text-blue-800">
+            Episode 10 & 12: Closures, Data Hiding & Garbage Collection
+          </h2>
+          <p class="text-gray-600 mb-8 text-center max-w-2xl mx-auto text-lg">
+            A **closure** is a function bundled with its lexical environment. An
+            inner function "remember" its outer scope, even after the outer
+            function has finished execution. This powerful feature enables
+            patterns like data privacy. Observe a counter whose `count` variable
+            is private and can only be changed or accessed via the returned
+            closure functions.
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+              <h3 class="font-semibold text-xl mb-3 text-blue-700">
+                Counter Factory Code:
+              </h3>
+              <div class="code-block" id="closure-code-block"></div>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <button id="incrementBtn" class="btn">
+                  Call counter.increment()
+                </button>
+                <button id="getValueBtn" class="btn">
+                  Call counter.getValue()
+                </button>
+                <button id="resetClosureBtn" class="btn btn-secondary">
+                  Reset Demo
+                </button>
+              </div>
+              <div class="mt-4">
+                <h3 class="font-semibold text-lg mb-2 text-blue-700">
+                  Independent Counter Instance:
+                </h3>
+                <div class="flex flex-wrap gap-3">
+                  <button id="anotherIncrementBtn" class="btn btn-secondary">
+                    Call anotherCounter.increment()
+                  </button>
+                  <button id="anotherGetValueBtn" class="btn btn-secondary">
+                    Call anotherCounter.getValue()
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-semibold text-xl mb-3 text-blue-700">
+                Interaction & State:
+              </h3>
+              <p class="text-base text-gray-600 mb-4">
+                The `count` variable exists only within the closure's scope.
+                It's truly private and can't be directly accessed. Its state
+                persists across calls. Notice how `counter` and `anotherCounter`
+                maintain their own independent `count` variables.
+              </p>
+              <div class="simulator-output-box" id="closure-output"></div>
+              <p class="mt-4 text-sm text-gray-700 font-medium">
+                This demonstrates how closures maintain state. The memory for
+                `count` is not garbage collected because the `increment` and
+                `getValue` functions still hold a reference to it.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="event-loop" class="mb-16 md:mb-24 pt-8 fade-in-section">
+        <div class="card p-6 md:p-10">
+          <h2 class="text-3xl font-bold mb-4 text-center text-blue-800">
+            Episode 14, 15 & 17: The Event Loop & Concurrency
+          </h2>
+          <p class="text-gray-600 mb-8 text-center max-w-2xl mx-auto text-lg">
+            JavaScript handles asynchronous tasks like `setTimeout` and
+            `Promise` without blocking its single thread. It offloads tasks to
+            Browser APIs. When ready, tasks go to the **Microtask Queue** (for
+            Promises, higher priority) or the **Callback Queue** (for
+            `setTimeout`). The **Event Loop** pushes tasks to the Call Stack for
+            execution when it's empty (Microtasks first!).
+          </p>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1">
+              <h3 class="font-semibold text-xl mb-3 text-blue-700">
+                Code to Execute:
+              </h3>
+              <div class="code-block text-sm" id="event-loop-code"></div>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <button id="runEventLoopBtn" class="btn">Run Animation</button>
+                <button
+                  id="pauseResumeEventLoopBtn"
+                  class="btn btn-secondary"
+                  disabled
+                >
+                  Pause / Resume
+                </button>
+              </div>
+            </div>
+            <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <h4 class="font-semibold text-center mb-2 text-blue-600">
+                  Call Stack
+                </h4>
+                <div
+                  id="el-stack"
+                  class="simulator-output-box h-48 flex flex-col-reverse items-center justify-start"
+                ></div>
+              </div>
+              <div>
+                <h4 class="font-semibold text-center mb-2 text-blue-600">
+                  Microtask Queue
+                </h4>
+                <div
+                  id="el-micro"
+                  class="simulator-output-box h-48 bg-blue-100 text-blue-800 flex flex-col justify-start"
+                ></div>
+              </div>
+              <div>
+                <h4 class="font-semibold text-center mb-2 text-blue-600">
+                  Callback Queue
+                </h4>
+                <div
+                  id="el-macro"
+                  class="simulator-output-box h-48 bg-green-100 text-green-800 flex flex-col justify-start"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <p
+            id="event-loop-description"
+            class="mt-4 text-center text-base text-gray-700 font-medium min-h-[40px]"
+          ></p>
+        </div>
+      </section>
+
+      <section
+        id="higher-order-functions"
+        class="mb-16 md:mb-24 pt-8 fade-in-section"
+      >
+        <div class="card p-6 md:p-10">
+          <h2 class="text-3xl font-bold mb-4 text-center text-blue-800">
+            Episode 13, 18 & 19: Higher-Order Functions
+          </h2>
+          <p class="text-gray-600 mb-8 text-center max-w-2xl mx-auto text-lg">
+            A **Higher-Order Function (HOF)** takes another function as an
+            argument or returns a function. This is possible because functions
+            are **first-class citizens** in JavaScript. `map`, `filter`, and
+            `reduce` are powerful HOFs for array manipulation. Interact with the
+            demo below to see them in action.
+          </p>
+
+          <h3 class="font-semibold text-xl mb-3 text-blue-700">
+            Original Data (`users` array):
+          </h3>
+          <div id="hof-original-data" class="data-table mb-6"></div>
+
+          <div class="flex flex-wrap gap-4 mb-6 justify-center">
+            <button id="hof-map-btn" class="btn">Map: Full Names</button>
+            <button id="hof-filter-btn" class="btn">
+              Filter: Users with Age > 30 & < 60
+            </button>
+            <button id="hof-reduce-btn" class="btn">
+              Reduce: Group by City
+            </button>
+            <button id="hof-chain-btn" class="btn">
+              Chain: Filter then Map
+            </button>
+            <button id="hof-reset-btn" class="btn btn-secondary">
+              Reset Demo
+            </button>
+          </div>
+
+          <h3 class="font-semibold text-xl mb-3 text-blue-700">
+            Code Snippet:
+          </h3>
+          <div
+            class="code-block mb-6"
+            id="hof-code-snippet"
+            style="min-height: 80px; display: none"
+          ></div>
+
+          <h3 class="font-semibold text-xl mb-3 text-blue-700">Result:</h3>
+          <div id="hof-output" class="simulator-output-box">
+            <pre>Result will be shown here after you click a button.</pre>
+          </div>
+          <p
+            id="hof-description"
+            class="mt-4 text-base text-gray-700 font-medium min-h-[40px]"
+          ></p>
+        </div>
+      </section>
+
+      <footer
+        class="text-center text-gray-500 py-10 border-t border-gray-200 mt-12"
+      >
+        <p class="text-md">
+          Mastering JavaScript's core concepts is the foundation for building
+          robust and efficient web applications.
+        </p>
+      </footer>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const highlightCodeLine = (codeLines, lineNumber) => {
+          if (!Array.isArray(codeLines)) codeLines = Array.from(codeLines);
+          codeLines.forEach((line) => line.classList.remove("highlight-line"));
+          if (
+            lineNumber !== null &&
+            lineNumber > 0 &&
+            lineNumber <= codeLines.length
+          ) {
+            codeLines[lineNumber - 1].classList.add("highlight-line");
+          }
+        };
+
+        const scrollToSection = (id) =>
+          document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+
+        const navLinks = document.querySelectorAll("nav a");
+        const sections = document.querySelectorAll("main section");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                navLinks.forEach((link) => {
+                  link.classList.toggle(
+                    "active",
+                    link.getAttribute("href") === `#${entry.target.id}`
+                  );
+                });
+              }
+            });
+          },
+          { root: null, rootMargin: "0px", threshold: 0.3 }
+        );
+        sections.forEach((section) => observer.observe(section));
+        navLinks.forEach((link) =>
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            scrollToSection(e.target.getAttribute("href").substring(1));
+          })
+        );
+
+        // Intersection Observer for fade-in-section
+        const fadeInObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target); // Unobserve once visible
+              }
+            });
+          },
+          {
+            root: null,
+            rootMargin: "0px",
+            threshold: 0.2, // Trigger when 20% of the section is visible
+          }
+        );
+
+        document.querySelectorAll(".fade-in-section").forEach((section) => {
+          fadeInObserver.observe(section);
+        });
+
+        (() => {
+          const container = document.getElementById("two-phase-process");
+          if (!container) return;
+          const nextBtn = container.querySelector("#nextPhaseStepBtn");
+          const resetBtn = container.querySelector("#resetPhaseBtn");
+          const memoryEl = container.querySelector("#memory-content");
+          const outputEl = container.querySelector("#output-content");
+          const descEl = container.querySelector("#tps-description");
+          const codeEl = container.querySelector("#two-phase-code");
+
+          let currentStep = 0;
+          const code = `console.log(varA);
+var varA = 10;
+console.log(varA);
+
+console.log(letB);
+let letB = 20;
+console.log(letB);
+
+myFunc();
+function myFunc() {
+  console.log("Function called!");
+}`;
+
+          const steps = [
+            {
+              desc: "Initial state. JS engine starts reading the code.",
+              memory: {},
+              output: [],
+              line: null,
+            },
+            {
+              desc: "Phase 1 (Memory Creation): `var varA` is found. Memory is allocated and initialized with `undefined`.",
+              memory: { varA: "undefined" },
+              output: [],
+              line: 2,
+            },
+            {
+              desc: "Phase 1 (Memory Creation): `let letB` is found. Memory is allocated but it remains uninitialized (Temporal Dead Zone).",
+              memory: { varA: "undefined", letB: "<uninitialized>" },
+              output: [],
+              line: 6,
+            },
+            {
+              desc: "Phase 1 (Memory Creation): `function myFunc` is found. The entire function code is stored in memory.",
+              memory: {
+                varA: "undefined",
+                letB: "<uninitialized>",
+                myFunc: "{...}",
+              },
+              output: [],
+              line: 9,
+            },
+            {
+              desc: "Phase 2 (Code Execution): `console.log(varA)` runs. `varA` is `undefined`.",
+              memory: {
+                varA: "undefined",
+                letB: "<uninitialized>",
+                myFunc: "{...}",
+              },
+              output: ["&gt; undefined"],
+              line: 1,
+            },
+            {
+              desc: "Phase 2 (Code Execution): The value `10` is assigned to `varA`.",
+              memory: { varA: 10, letB: "<uninitialized>", myFunc: "{...}" },
+              output: ["&gt; undefined"],
+              line: 2,
+            },
+            {
+              desc: "Phase 2 (Code Execution): `console.log(varA)` runs. `varA` is now `10`.",
+              memory: { varA: 10, letB: "<uninitialized>", myFunc: "{...}" },
+              output: ["&gt; undefined", "&gt; 10"],
+              line: 3,
+            },
+            {
+              desc: "Phase 2 (Code Execution): `console.log(letB)` runs. `letB` is in Temporal Dead Zone. This would cause a ReferenceError in real JS.",
+              memory: { varA: 10, letB: "<uninitialized>", myFunc: "{...}" },
+              output: [
+                "&gt; undefined",
+                "&gt; 10",
+                "<span class=\"error-message\">&gt; ReferenceError: Cannot access 'letB' before initialization</span>",
+              ],
+              line: 5,
+            },
+            {
+              desc: "Phase 2 (Code Execution): The value `20` is assigned to `letB`. It exits the Temporal Dead Zone.",
+              memory: { varA: 10, letB: 20, myFunc: "{...}" },
+              output: [
+                "&gt; undefined",
+                "&gt; 10",
+                '<span class="error-message">&gt; ReferenceError...</span>',
+              ],
+              line: 6,
+            },
+            {
+              desc: "Phase 2 (Code Execution): `console.log(letB)` runs. `letB` is now `20`.",
+              memory: { varA: 10, letB: 20, myFunc: "{...}" },
+              output: [
+                "&gt; undefined",
+                "&gt; 10",
+                '<span class="error-message">&gt; ReferenceError...</span>',
+                "&gt; 20",
+              ],
+              line: 7,
+            },
+            {
+              desc: "Phase 2 (Code Execution): `myFunc()` is called. Its code is retrieved from memory and executed.",
+              memory: { varA: 10, letB: 20, myFunc: "{...}" },
+              output: [
+                "&gt; undefined",
+                "&gt; 10",
+                '<span class="error-message">&gt; ReferenceError...</span>',
+                "&gt; 20",
+              ],
+              line: 9,
+            },
+            {
+              desc: 'Phase 2 (Code Execution): Inside `myFunc`, `console.log("Function called!")` runs.',
+              memory: { varA: 10, letB: 20, myFunc: "{...}" },
+              output: [
+                "&gt; undefined",
+                "&gt; 10",
+                '<span class="error-message">&gt; ReferenceError...</span>',
+                "&gt; 20",
+                "&gt; Function called!",
+              ],
+              line: 10,
+            },
+            {
+              desc: "Simulation complete. The Global Execution Context has finished.",
+              memory: { varA: 10, letB: 20, myFunc: "{...}" },
+              output: [
+                "&gt; undefined",
+                "&gt; 10",
+                '<span class="error-message">&gt; ReferenceError...</span>',
+                "&gt; 20",
+                "&gt; Function called!",
+              ],
+              line: null,
+            },
+          ];
+
+          const render = () => {
+            const state = steps[currentStep];
+            descEl.textContent = state.desc;
+            memoryEl.innerHTML = Object.entries(state.memory)
+              .map(([key, value]) => {
+                let valHtml = "";
+                let valueClass = "";
+                if (value === "undefined")
+                  valHtml = '<span class="undefined-value">undefined</span>';
+                else if (value === "<uninitialized>")
+                  valHtml =
+                    '<span class="error-message">&lt;uninitialized&gt; (TDZ)</span>';
+                else if (typeof value === "string" && value.startsWith("{"))
+                  valHtml =
+                    '<span class="text-purple-400">{ function... }</span>';
+                else valHtml = `<span class="text-green-400">${value}</span>`;
+                return `<p class="flex justify-between items-center py-1"><span class="text-gray-400">${key}:</span> <span class="font-mono">${valHtml}</span></p>`;
+              })
+              .join("");
+            outputEl.innerHTML = state.output
+              .map((o) => `<p>${o}</p>`)
+              .join("");
+            const codeLines = Array.from(codeEl.children);
+            highlightCodeLine(codeLines, state.line);
+            nextBtn.disabled = currentStep === steps.length - 1;
+            resetBtn.disabled = currentStep === 0;
+          };
+
+          const setup = () => {
+            codeEl.innerHTML = code
+              .split("\n")
+              .map((line) => `<p>${line.replace(/ /g, "&nbsp;")}</p>`)
+              .join("");
+            currentStep = 0;
+            render();
+          };
+
+          nextBtn.addEventListener("click", () => {
+            if (currentStep < steps.length - 1) currentStep++;
+            render();
+          });
+          resetBtn.addEventListener("click", setup);
+
+          setup();
+        })();
+
+        (() => {
+          const container = document.getElementById("call-stack");
+          if (!container) return;
+          const playBtn = container.querySelector("#playStackBtn");
+          const resetBtn = container.querySelector("#resetStackBtn");
+          const stackEl = container.querySelector("#call-stack-visual");
+          const consoleOutputEl = container.querySelector("#call-stack-output");
+          const descEl = container.querySelector("#call-stack-description");
+          const codeEl = container.querySelector("#call-stack-code");
+          let timeoutId = null;
+          let isPlaying = false;
+          let currentStackStep = 0;
+
+          const code = `function first() {
+  var a = 'Hello';
+  console.log('Inside first, a:', a);
+  second();
+  console.log('Inside first, after second:', a);
+}
+function second() {
+  var b = 'World';
+  console.log('Inside second, b:', b);
+  third();
+  console.log('Inside second, after third:', b);
+}
+function third() {
+  console.log('Inside third: Deepest call!');
+}
+first();
+console.log('Global scope finished.');`;
+
+          const steps = [
+            {
+              desc: "Program starts. Global EC is created and pushed onto the stack. This is the base of our program.",
+              line: 16,
+              action: "push",
+              name: "Global EC (window)",
+              color: "bg-blue-600",
+              output: null,
+            },
+            {
+              desc: "`first()` is invoked. Its EC is created and pushed. Control shifts to `first()`.",
+              line: 16,
+              action: "push",
+              name: "first() EC",
+              color: "bg-green-600",
+              output: null,
+            },
+            {
+              desc: "Inside `first()`: `var a` is initialized.",
+              line: 2,
+              action: "noop",
+              output: null,
+            },
+            {
+              desc: "Inside `first()`: `console.log()` is executed.",
+              line: 3,
+              action: "log",
+              output: "Inside first, a: Hello",
+            },
+            {
+              desc: "Inside `first()`: `second()` is invoked. Its EC is created and pushed.",
+              line: 4,
+              action: "push",
+              name: "second() EC",
+              color: "bg-yellow-500",
+              output: null,
+            },
+            {
+              desc: "Inside `second()`: `var b` is initialized.",
+              line: 8,
+              action: "noop",
+              output: null,
+            },
+            {
+              desc: "Inside `second()`: `console.log()` is executed.",
+              line: 9,
+              action: "log",
+              output: "Inside second, b: World",
+            },
+            {
+              desc: "Inside `second()`: `third()` is invoked. Its EC is created and pushed.",
+              line: 10,
+              action: "push",
+              name: "third() EC",
+              color: "bg-purple-600",
+              output: null,
+            },
+            {
+              desc: "Inside `third()`: `console.log()` is executed.",
+              line: 14,
+              action: "log",
+              output: "Inside third: Deepest call!",
+            },
+            {
+              desc: "`third()` finishes. Its EC is popped. Control returns to `second()`.",
+              line: 15,
+              action: "pop",
+              output: null,
+            },
+            {
+              desc: "Control returns to `second()`. `console.log()` runs.",
+              line: 11,
+              action: "log",
+              output: "Inside second, after third: World",
+            },
+            {
+              desc: "`second()` finishes. Its EC is popped. Control returns to `first()`.",
+              line: 12,
+              action: "pop",
+              output: null,
+            },
+            {
+              desc: "Control returns to `first()`. `console.log()` runs.",
+              line: 5,
+              action: "log",
+              output: "Inside first, after second: Hello",
+            },
+            {
+              desc: "`first()` finishes. Its EC is popped. Control returns to Global EC.",
+              line: 6,
+              action: "pop",
+              output: null,
+            },
+            {
+              desc: "Global scope: `console.log()` is executed.",
+              line: 17,
+              action: "log",
+              output: "Global scope finished.",
+            },
+            {
+              desc: "Program finishes. Global EC is popped. The Call Stack is empty.",
+              line: null,
+              action: "pop",
+              output: null,
+            },
+            {
+              desc: "Animation Complete. Click Reset to run again.",
+              line: null,
+              action: "finish",
+              output: null,
+            },
+          ];
+
+          const reset = () => {
+            clearTimeout(timeoutId);
+            isPlaying = false;
+            currentStackStep = 0;
+            stackEl.innerHTML = "";
+            consoleOutputEl.innerHTML = "";
+            descEl.textContent = 'Click "Play Animation" to start.';
+            highlightCodeLine(Array.from(codeEl.children), null);
+            playBtn.disabled = false;
+            resetBtn.disabled = false;
+          };
+
+          const addStackFrame = (name, color, delay) => {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                // Remove active from all currently visible frames
+                Array.from(stackEl.children).forEach((child) =>
+                  child.classList.remove("active")
+                );
+
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 ${color}`;
+                frame.textContent = name;
+                stackEl.appendChild(frame); // Append: it will visually appear at the top due to flex-col-reverse
+
+                // Apply visible and active after a short delay to ensure DOM render
+                setTimeout(() => {
+                  frame.classList.add("visible", "active");
+                  resolve();
+                }, 50);
+              }, delay);
+            });
+          };
+
+          const removeStackFrame = (delay) => {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                if (stackEl.lastChild) {
+                  // Target the last child (visually the top)
+                  stackEl.lastChild.classList.remove("active"); // Remove active from the one being popped
+                  stackEl.lastChild.style.opacity = "0"; // Start fade out
+                  setTimeout(() => {
+                    if (stackEl.lastChild)
+                      stackEl.removeChild(stackEl.lastChild); // Remove element after fade out
+
+                    // If there's a new element at the top (which is now the new lastChild), make it active
+                    if (stackEl.lastChild) {
+                      // A tiny delay to ensure the DOM has settled after removal
+                      setTimeout(() => {
+                        stackEl.lastChild.classList.add("active");
+                      }, 20);
+                    }
+                    resolve();
+                  }, 300); // Wait for opacity transition
+                } else {
+                  resolve();
+                }
+              }, delay);
+            });
+          };
+
+          const play = () => {
+            reset();
+            playBtn.disabled = true;
+            resetBtn.disabled = true;
+            isPlaying = true;
+            currentStackStep = 0;
+
+            const runStep = async () => {
+              if (!isPlaying || currentStackStep >= steps.length) {
+                playBtn.disabled = false;
+                resetBtn.disabled = false;
+                descEl.textContent =
+                  "Animation finished. Click Reset to run again.";
+                highlightCodeLine(Array.from(codeEl.children), null);
+                return;
+              }
+
+              const step = steps[currentStackStep];
+              descEl.textContent = step.desc;
+              highlightCodeLine(Array.from(codeEl.children), step.line);
+
+              if (step.action === "push") {
+                await addStackFrame(step.name, step.color, 500);
+              } else if (step.action === "pop") {
+                await removeStackFrame(800);
+              } else if (step.action === "log" && step.output !== null) {
+                consoleOutputEl.innerHTML += `<p>&gt; ${step.output}</p>`;
+                consoleOutputEl.scrollTop = consoleOutputEl.scrollHeight;
+                await new Promise((r) => setTimeout(r, 500));
+              } else if (step.action === "noop") {
+                await new Promise((r) => setTimeout(r, 500));
+              }
+
+              currentStackStep++;
+              timeoutId = setTimeout(runStep, 1500);
+            };
+            runStep();
+          };
+
+          codeEl.innerHTML = code
+            .split("\n")
+            .map((line) => `<p>${line.replace(/ /g, "&nbsp;")}</p>`)
+            .join("");
+          playBtn.addEventListener("click", play);
+          resetBtn.addEventListener("click", reset);
+          reset();
+        })();
+
+        (() => {
+          const container = document.getElementById("block-scope-tdz");
+          if (!container) return;
+          const selector = container.querySelector("#tdzScenarioSelector");
+          const runBtn = container.querySelector("#runTDZBtn");
+          const resetBtn = container.querySelector("#resetTDZBtn");
+          const codeBlock = container.querySelector("#tdz-code-block");
+          const outputEl = container.querySelector("#tdz-output");
+          const descEl = container.querySelector("#tdz-description");
+
+          const scenarios = {
+            varHoisting: {
+              title: "1. var Hoisting (undefined value)",
+              code: `console.log(a);\nvar a = 10;`,
+              run: () => {
+                outputEl.innerHTML = `<p>&gt; <span class="undefined-value">undefined</span></p>`;
+                descEl.textContent =
+                  "Correct. During the Memory Creation Phase, `var` variables are hoisted and initialized with `undefined`. Accessing them before their assignment yields `undefined`, not an error.";
+              },
+            },
+            letTDZ: {
+              title: "2. let in Temporal Dead Zone (ReferenceError)",
+              code: `console.log(b);\nlet b = 20;`,
+              run: () => {
+                outputEl.innerHTML = `<p class="error-message">Uncaught ReferenceError: Cannot access 'b' before initialization</p>`;
+                descEl.textContent =
+                  "`let` variables are hoisted (memory is allocated) but remain uninitialized. The period before their initialization is the 'Temporal Dead Zone'. Accessing them here throws a `ReferenceError`.";
+              },
+            },
+            constReassign: {
+              title: "3. const Reassignment (TypeError)",
+              code: `const c = 30;\nc = 40;`,
+              run: () => {
+                outputEl.innerHTML = `<p class="error-message">Uncaught TypeError: Assignment to constant variable.</p>`;
+                descEl.textContent =
+                  "`const` variables cannot be reassigned after they are initialized. They create a constant binding to a value, resulting in a `TypeError` if reassignment is attempted.";
+              },
+            },
+            letRedeclare: {
+              title: "4. let Redeclaration (SyntaxError)",
+              code: `let d = 50;\nlet d = 60;`,
+              run: () => {
+                outputEl.innerHTML = `<p class="error-message">Uncaught SyntaxError: Identifier 'd' has already been declared</p>`;
+                descEl.textContent =
+                  "You cannot redeclare a variable with `let` (or `const`) in the same scope. This is a grammar rule violation (syntax error) and prevents accidental re-declarations.";
+              },
+            },
+            varNoBlockScope: {
+              title: "5. var: No Block Scope",
+              code: `if (true) {\n  var x = 10;\n}\nconsole.log(x);`,
+              run: () => {
+                outputEl.innerHTML = `<p>&gt; 10</p>`;
+                descEl.textContent =
+                  "`var` variables are NOT block-scoped; they are function-scoped or global-scoped. Therefore, 'x' defined inside the 'if' block is still accessible outside it.";
+              },
+            },
+            letBlockScope: {
+              title: "6. let: Block Scope",
+              code: `if (true) {\n  let y = 20;\n}\nconsole.log(y);`,
+              run: () => {
+                outputEl.innerHTML = `<p class="error-message">Uncaught ReferenceError: y is not defined</p>`;
+                descEl.textContent =
+                  "`let` variables ARE block-scoped. 'y' is confined to the 'if' block where it's declared and cannot be accessed outside it, resulting in a `ReferenceError`.";
+              },
+            },
+            letShadowingVar: {
+              title: "7. let Shadowing var",
+              code: `var p = 50;\nif (true) {\n  let p = 60;\n  console.log('Inside block:', p);\n}\nconsole.log('Outside block:', p);`,
+              run: () => {
+                outputEl.innerHTML = `<p>&gt; Inside block: 60</p><p>&gt; Outside block: 50</p>`;
+                descEl.textContent =
+                  "Shadowing occurs when an inner scope declares a variable with the same name as an outer variable. `let` creates a new `p` in the block's scope, hiding the outer `var p` within that block, but not affecting the original outer variable.";
+              },
+            },
+            illegalVarShadowLet: {
+              title: "8. Illegal var Shadowing let (SyntaxError)",
+              code: `let q = 70;\nif (true) {\n  var q = 80;\n}`,
+              run: () => {
+                outputEl.innerHTML = `<p class="error-message">Uncaught SyntaxError: Identifier 'q' has already been declared</p>`;
+                descEl.textContent =
+                  "You cannot use `var` to redeclare a variable that was already declared with `let` or `const` in a containing scope. This is an `Illegal Shadowing` syntax error, preventing potential confusion.";
+              },
+            },
+            constNoInitialization: {
+              title: "9. const Missing Initialization (SyntaxError)",
+              code: `const r;`,
+              run: () => {
+                outputEl.innerHTML = `<p class="error-message">Uncaught SyntaxError: Missing initializer in const declaration</p>`;
+                descEl.textContent =
+                  "`const` variables must be initialized at the time of their declaration. They do not have a default `undefined` value, so failing to provide an initial value is a `SyntaxError`.";
+              },
+            },
+            functionHoisting: {
+              title: "10. Function Hoisting",
+              code: `greet();\n\nfunction greet() {\n  console.log("Hello!");\n}`,
+              run: () => {
+                outputEl.innerHTML = `<p>&gt; Hello!</p>`;
+                descEl.textContent =
+                  "Function Declarations are fully hoisted, meaning both their declaration and definition are moved to the top of their scope during the Memory Creation Phase. You can call them before they appear in your code.";
+              },
+            },
+            functionExpressionHoisting: {
+              title: "11. Function Expression Hoisting",
+              code: `try {\n  sayHi();\n} catch (e) {\n  console.log(e.message);\n}\n\nvar sayHi = function() {\n  console.log("Hi!");\n};`,
+              run: () => {
+                outputEl.innerHTML = `<p class="error-message">&gt; sayHi is not a function</p>`;
+                descEl.textContent =
+                  "Function Expressions behave like `var` variables during hoisting. Only the variable `sayHi` is hoisted and initialized with `undefined`. Attempting to call it as a function before its assignment results in a `TypeError`.";
+              },
+            },
+          };
+
+          const setup = () => {
+            selector.innerHTML = Object.entries(scenarios)
+              .map(
+                ([key, { title }]) => `<option value="${key}">${title}</option>`
+              )
+              .join("");
+            loadScenario(selector.value);
+          };
+
+          const loadScenario = (scenarioName) => {
+            const scenario = scenarios[scenarioName];
+            if (scenario) {
+              codeBlock.textContent = scenario.code;
+              outputEl.innerHTML =
+                '<pre class="text-gray-400">Click "Run Simulation" to see the output.</pre>';
+              descEl.textContent = "";
+              runBtn.disabled = false;
+              resetBtn.disabled = false;
+            }
+          };
+
+          selector.addEventListener("change", () =>
+            loadScenario(selector.value)
+          );
+          runBtn.addEventListener("click", () => {
+            outputEl.innerHTML = "";
+            descEl.textContent = "";
+            scenarios[selector.value].run();
+          });
+          resetBtn.addEventListener("click", () =>
+            loadScenario(selector.value)
+          );
+
+          setup();
+        })();
+
+        (() => {
+          const container = document.getElementById("closures");
+          if (!container) return;
+          const incBtn = container.querySelector("#incrementBtn");
+          const valBtn = container.querySelector("#getValueBtn");
+          const resetClosureBtn = container.querySelector("#resetClosureBtn");
+          const anotherIncBtn = container.querySelector("#anotherIncrementBtn");
+          const anotherValBtn = container.querySelector("#anotherGetValueBtn");
+          const outputEl = container.querySelector("#closure-output");
+          const codeEl = container.querySelector("#closure-code-block");
+          let counterInstance1 = null;
+          let counterInstance2 = null;
+
+          const code = `function createCounter() {
+  let count = 0;
+  return {
+    increment: function() { count++; },
+    getValue: function() { return count; }
+  };
+}
+
+const counter = createCounter();
+const anotherCounter = createCounter();`;
+          codeEl.innerHTML = code
+            .split("\n")
+            .map((line) => `<p>${line.replace(/ /g, "&nbsp;")}</p>`)
+            .join("");
+
+          const initializeCounters = () => {
+            function createCounter() {
+              let count = 0;
+              return {
+                increment: (name = "") => {
+                  count++;
+                  outputEl.innerHTML += `<p>Counter <span class="font-bold text-blue-400">${name}</span> incremented. Its private 'count' is now <span class="font-bold text-green-400">${count}</span>.</p>`;
+                  outputEl.scrollTop = outputEl.scrollHeight;
+                },
+                getValue: (name = "") => {
+                  outputEl.innerHTML += `<p>Counter <span class="font-bold text-blue-400">${name}</span> value is <span class="font-bold text-lg text-green-400">${count}</span>.</p>`;
+                  outputEl.scrollTop = outputEl.scrollHeight;
+                },
+              };
+            }
+            counterInstance1 = createCounter();
+            counterInstance2 = createCounter();
+            outputEl.innerHTML =
+              "<pre>Two independent counters initialized. Click buttons to interact.</pre>";
+          };
+
+          incBtn.addEventListener("click", () => {
+            if (counterInstance1) counterInstance1.increment("1");
+          });
+          valBtn.addEventListener("click", () => {
+            if (counterInstance1) counterInstance1.getValue("1");
+          });
+          anotherIncBtn.addEventListener("click", () => {
+            if (counterInstance2) anotherCounter.increment("2");
+          });
+          anotherValBtn.addEventListener("click", () => {
+            if (counterInstance2) anotherCounter.getValue("2");
+          });
+          if (resetClosureBtn) {
+            resetClosureBtn.addEventListener("click", initializeCounters);
+          }
+
+          initializeCounters();
+        })();
+
+        (() => {
+          const container = document.getElementById("event-loop");
+          if (!container) return;
+          const runBtn = container.querySelector("#runEventLoopBtn");
+          const pauseResumeBtn = container.querySelector(
+            "#pauseResumeEventLoopBtn"
+          );
+          const stackEl = container.querySelector("#el-stack");
+          const microEl = container.querySelector("#el-micro");
+          const macroEl = container.querySelector("#el-macro");
+          const descEl = container.querySelector("#event-loop-description");
+          const codeEl = container.querySelector("#event-loop-code");
+          let timeoutId = null;
+          let isPlaying = false;
+          let isPaused = false;
+          let currentStep = 0;
+
+          const code = `console.log("Start");
+
+setTimeout(() => {
+  console.log("Timeout CB 1 (0ms)");
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log("Promise Resolved 1");
+});
+
+setTimeout(() => {
+  console.log("Timeout CB 2 (10ms)");
+}, 10);
+
+Promise.resolve().then(() => {
+  console.log("Promise Resolved 2");
+});
+
+console.log("End");`;
+          codeEl.innerHTML = code
+            .split("\n")
+            .map((line) => `<p>${line.replace(/ /g, "&nbsp;")}</p>`)
+            .join("");
+
+          const reset = () => {
+            clearTimeout(timeoutId);
+            isPlaying = false;
+            isPaused = false;
+            currentStep = 0;
+            stackEl.innerHTML = "";
+            microEl.innerHTML = "";
+            macroEl.innerHTML = "";
+            descEl.textContent = "";
+            runBtn.disabled = false;
+            pauseResumeBtn.disabled = true;
+            pauseResumeBtn.textContent = "Pause / Resume";
+          };
+
+          const addItem = (el, text, colorClass) => {
+            const item = document.createElement("div");
+            item.textContent = text;
+            item.className = `event-loop-item p-2 rounded mb-2 text-sm ${colorClass}`;
+            el.appendChild(item); // Append to bottom for FIFO visual
+            setTimeout(() => item.classList.add("visible"), 50);
+            el.scrollTop = el.scrollHeight;
+            return item;
+          };
+
+          const removeItem = (el, delay) => {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                if (el.firstChild) {
+                  el.firstChild.classList.add("processing"); // Highlight item being processed
+                  setTimeout(() => {
+                    el.removeChild(el.firstChild); // Remove from top for FIFO visual
+                    resolve();
+                  }, 400); // Allow time for processing highlight
+                } else {
+                  resolve();
+                }
+              }, delay);
+            });
+          };
+
+          const steps = [
+            {
+              desc: "Animation Started. `console.log('Start')` is pushed to the Call Stack.",
+              action: () => {
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-gray-600`;
+                frame.textContent = "console.log('Start')";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Stack executes `console.log('Start')`. The stack clears.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+              },
+            },
+            {
+              desc: "`setTimeout(0ms)` is called. It's offloaded to the Web APIs.",
+              action: () => {
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-gray-600`;
+                frame.textContent = "setTimeout(0ms)";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Timer completes. `Timeout CB 1` is pushed to the Callback Queue.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+                addItem(macroEl, "Timeout CB 1", "bg-green-200");
+              },
+            },
+            {
+              desc: "`Promise.then()` 1 is called. It's offloaded.",
+              action: () => {
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-gray-600`;
+                frame.textContent = "Promise.then() 1";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Promise 1 resolves. Its callback is a microtask, moved to the Microtask Queue.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+                addItem(microEl, "Promise CB 1", "bg-blue-200");
+              },
+            },
+            {
+              desc: "`setTimeout(10ms)` is called. Offloaded.",
+              action: () => {
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-gray-600`;
+                frame.textContent = "setTimeout(10ms)";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Timer (10ms) completes. `Timeout CB 2` is pushed to the Callback Queue.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+                addItem(macroEl, "Timeout CB 2", "bg-green-200");
+              },
+            },
+            {
+              desc: "`Promise.then()` 2 is called. Offloaded.",
+              action: () => {
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-gray-600`;
+                frame.textContent = "Promise.then() 2";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Promise 2 resolves. Its callback is a microtask, moved to the Microtask Queue.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+                addItem(microEl, "Promise CB 2", "bg-blue-200");
+              },
+            },
+            {
+              desc: "Stack executes `console.log('End')`. Stack clears.",
+              action: () => {
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-gray-600`;
+                frame.textContent = "console.log('End')";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Main script finished. Call Stack is empty. Event Loop checks queues. Microtask Queue has priority!",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+              },
+            },
+            {
+              desc: "Event Loop pushes `Promise CB 1` from Microtask Queue to Call Stack.",
+              action: async () => {
+                await removeItem(microEl, 500); // Remove from queue
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-blue-600`;
+                frame.textContent = "Promise CB 1";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Call Stack executes `Promise CB 1`. Stack clears. Event Loop checks queues again.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+              },
+            },
+            {
+              desc: "Event Loop finds another microtask: `Promise CB 2`. Pushes it to Call Stack.",
+              action: async () => {
+                await removeItem(microEl, 500);
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-blue-600`;
+                frame.textContent = "Promise CB 2";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Call Stack executes `Promise CB 2`. Stack clears. Microtask Queue is now empty.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+              },
+            },
+            {
+              desc: "Call Stack is empty. Microtask Queue is empty. Event Loop checks Callback Queue.",
+              action: () => {},
+            },
+            {
+              desc: "Event Loop pushes `Timeout CB 1` from Callback Queue to Call Stack.",
+              action: async () => {
+                await removeItem(macroEl, 500);
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-green-600`;
+                frame.textContent = "Timeout CB 1";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Call Stack executes `Timeout CB 1`. Stack clears.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+              },
+            },
+            {
+              desc: "Event Loop finds `Timeout CB 2`. Pushes it to Call Stack.",
+              action: async () => {
+                await removeItem(macroEl, 500);
+                const frame = document.createElement("div");
+                frame.className = `stack-item w-4/5 text-center p-3 rounded-md font-semibold text-white mb-2 bg-green-600`;
+                frame.textContent = "Timeout CB 2";
+                stackEl.appendChild(frame);
+                setTimeout(() => frame.classList.add("visible", "active"), 50);
+              },
+            },
+            {
+              desc: "Call Stack executes `Timeout CB 2`. Stack clears.",
+              action: async () => {
+                if (stackEl.lastChild) {
+                  stackEl.lastChild.classList.remove("active");
+                  stackEl.lastChild.style.opacity = "0";
+                  await new Promise((r) => setTimeout(r, 300));
+                  if (stackEl.lastChild) stackEl.removeChild(stackEl.lastChild);
+                }
+              },
+            },
+            {
+              desc: "Animation Complete. All queues and stack are empty.",
+              action: () => {
+                runBtn.disabled = false;
+                pauseResumeBtn.disabled = true;
+                isPlaying = false;
+                isPaused = false;
+                pauseResumeBtn.textContent = "Pause / Resume";
+              },
+            },
+          ];
+
+          const runAnimation = () => {
+            if (isPaused) {
+              isPaused = false;
+              pauseResumeBtn.textContent = "Pause";
+              executeStep();
+            } else if (!isPlaying) {
+              reset();
+              runBtn.disabled = true;
+              pauseResumeBtn.disabled = false;
+              pauseResumeBtn.textContent = "Pause";
+              isPlaying = true;
+              executeStep();
+            }
+          };
+
+          const executeStep = async () => {
+            if (!isPlaying || isPaused || currentStep >= steps.length) {
+              if (currentStep >= steps.length) {
+                // Ensure final action for complete state
+                steps[steps.length - 1].action();
+              }
+              return;
+            }
+
+            const step = steps[currentStep];
+            descEl.textContent = step.desc;
+            if (step.action) await step.action(); // Use await for async actions
+            currentStep++;
+            if (currentStep < steps.length)
+              timeoutId = setTimeout(executeStep, 2000);
+            else {
+              // Ensure last step action is called, and then finalize
+              steps[currentStep - 1].action(); // Call the final action
+              runBtn.disabled = false;
+              pauseResumeBtn.disabled = true;
+              isPlaying = false;
+              isPaused = false;
+              pauseResumeBtn.textContent = "Pause / Resume";
+            }
+          };
+
+          pauseResumeBtn.addEventListener("click", () => {
+            isPaused = !isPaused;
+            if (isPaused) {
+              clearTimeout(timeoutId);
+              pauseResumeBtn.textContent = "Resume";
+              descEl.textContent = "Animation paused.";
+            } else {
+              pauseResumeBtn.textContent = "Pause";
+              executeStep();
+            }
+          });
+
+          runBtn.addEventListener("click", runAnimation);
+          reset();
+        })();
+
+        (() => {
+          const container = document.getElementById("higher-order-functions");
+          if (!container) return;
+          const originalDataEl = container.querySelector("#hof-original-data");
+          const outputEl = container.querySelector("#hof-output");
+          const descEl = container.querySelector("#hof-description");
+          const codeSnippetEl = container.querySelector("#hof-code-snippet");
+
+          const users = [
+            {
+              id: 1,
+              firstName: "Akshay",
+              lastName: "Saini",
+              age: 26,
+              city: "Bengaluru",
+            },
+            {
+              id: 2,
+              firstName: "Donald",
+              lastName: "Trump",
+              age: 75,
+              city: "New York",
+            },
+            {
+              id: 3,
+              firstName: "Elon",
+              lastName: "Musk",
+              age: 50,
+              city: "Austin",
+            },
+            {
+              id: 4,
+              firstName: "Deepika",
+              lastName: "Padukone",
+              age: 26,
+              city: "Mumbai",
+            },
+            {
+              id: 5,
+              firstName: "Barack",
+              lastName: "Obama",
+              age: 62,
+              city: "Chicago",
+            },
+            {
+              id: 6,
+              firstName: "Priyanka",
+              lastName: "Chopra",
+              age: 41,
+              city: "Mumbai",
+            },
+          ];
+
+          const renderTable = (data) => {
+            if (!Array.isArray(data) || data.length === 0)
+              return '<p class="text-gray-500">No data.</p>';
+            if (typeof data[0] !== "object" || data[0] === null)
+              return `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            let headers = Object.keys(data[0]);
+            let table = "<table><thead><tr>";
+            headers.forEach((h) => (table += `<th>${h}</th>`));
+            table += "</tr></thead><tbody>";
+            data.forEach((row) => {
+              table += "<tr>";
+              headers.forEach((h) => {
+                const value = row[h];
+                table += `<td>${
+                  typeof value === "object" && value !== null
+                    ? JSON.stringify(value)
+                    : value
+                }</td>`;
+              });
+              table += "</tr>";
+            });
+            table += "</tbody></table>";
+            return table;
+          };
+
+          const showCodeSnippet = (code) => {
+            codeSnippetEl.textContent = code;
+            codeSnippetEl.style.display = "block";
+          };
+
+          const hideCodeSnippet = () => {
+            codeSnippetEl.textContent = "";
+            codeSnippetEl.style.display = "none";
+          };
+
+          const resetHof = () => {
+            outputEl.innerHTML =
+              "<pre>Result will be shown here after you click a button.</pre>";
+            descEl.textContent = "";
+            hideCodeSnippet();
+          };
+
+          originalDataEl.innerHTML = renderTable(users);
+          resetHof();
+
+          container
+            .querySelector("#hof-map-btn")
+            .addEventListener("click", () => {
+              const code = `users.map(user => \`\${user.firstName} \${user.lastName}\`);`;
+              showCodeSnippet(code);
+              const result = users.map(
+                (user) => `${user.firstName} ${user.lastName}`
+              );
+              outputEl.innerHTML = `<pre>${JSON.stringify(
+                result,
+                null,
+                2
+              )}</pre>`;
+              descEl.textContent =
+                "Applied `map(user => `${user.firstName} ${user.lastName}`)`: Transformed each user object into their full name, creating a new array of strings.";
+            });
+          container
+            .querySelector("#hof-filter-btn")
+            .addEventListener("click", () => {
+              const code = `users.filter(user => user.age > 30 && user.age < 60);`;
+              showCodeSnippet(code);
+              const result = users.filter(
+                (user) => user.age > 30 && user.age < 60
+              );
+              outputEl.innerHTML = `<pre>${JSON.stringify(
+                result,
+                null,
+                2
+              )}</pre>`;
+              descEl.textContent =
+                "Applied `filter(user => user.age > 30 && user.age < 60)`: Created a new array containing only users whose age is between 30 and 60 (exclusive).";
+            });
+          container
+            .querySelector("#hof-reduce-btn")
+            .addEventListener("click", () => {
+              const code = `users.reduce((acc, user) => {
+    (acc[user.city] = acc[user.city] || []).push(user.firstName);
+    return acc;
+}, {});`;
+              showCodeSnippet(code);
+              const result = users.reduce((acc, user) => {
+                (acc[user.city] = acc[user.city] || []).push(user.firstName);
+                return acc;
+              }, {});
+              outputEl.innerHTML = `<pre>${JSON.stringify(
+                result,
+                null,
+                2
+              )}</pre>`;
+              descEl.textContent =
+                "Applied `reduce` to group user first names by city, producing a single object mapping cities to arrays of names.";
+            });
+          container
+            .querySelector("#hof-chain-btn")
+            .addEventListener("click", () => {
+              const code = `users
+    .filter(x => x.city === "Mumbai")
+    .map(x => \`\${x.firstName} (Age: \${x.age})\`);`;
+              showCodeSnippet(code);
+              const result = users
+                .filter((x) => x.city === "Mumbai")
+                .map((x) => `${x.firstName} (Age: ${x.age})`);
+              outputEl.innerHTML = `<pre>${JSON.stringify(
+                result,
+                null,
+                2
+              )}</pre>`;
+              descEl.textContent =
+                "Chained `filter` and `map`: First, filtered users from 'Mumbai', then mapped them to a descriptive string, demonstrating a powerful data pipeline.";
+            });
+          container
+            .querySelector("#hof-reset-btn")
+            .addEventListener("click", resetHof);
+        })();
+      });
+    </script>
+  </body>
+</html>
