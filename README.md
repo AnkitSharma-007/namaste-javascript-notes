@@ -1,6 +1,12 @@
 # Namaste JS Notes
 
-Notes based on the [Namaste JavaScript playlist by Akshay Saini](https://www.youtube.com/playlist?list=PLlasXeu85E9cQ32gLCvAvr9vNaUccPVNP).
+Take a visual journey through key JavaScript concepts like Execution Context, Hoisting, Call Stack, and the Event Loop with this [interactive infographic](https://ankitsharma-007.github.io/namaste-javascript-notes/).
+
+Prefer reading instead? No worries, detailed notes are available below.
+
+Master these foundational topics and walk into your next JavaScript interview with confidence!
+
+P.S: These notes are based on the [Namaste JavaScript playlist by Akshay Saini](https://www.youtube.com/playlist?list=PLlasXeu85E9cQ32gLCvAvr9vNaUccPVNP).
 
 ## Episode 1: JavaScript Execution Context
 
